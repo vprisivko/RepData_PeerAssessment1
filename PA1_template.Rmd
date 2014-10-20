@@ -13,7 +13,12 @@ opts_chunk$set(cache = TRUE)
 
 ## Loading and preprocessing the data
 ```{r load}
-unzip("activity.zip")
+if (!file.exists("./activity.zip")) {
+  fileURL = "https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Factivity.zip"
+  download.file(fileURL, "./activity_data.zip")
+  unzip("activity.zip")
+}
+
 activity = read.csv("activity.csv")
 activity$date = as.Date(activity$date)
 summary(activity)
@@ -26,10 +31,10 @@ mean(totalSteps$steps)
 median(totalSteps$steps)
 
 library(ggplot2)
-ggplot(totalSteps, aes(x = date, weight = steps)) + 
-  geom_bar(colour = "black", fill = "magenta", binwidth = 1) +
-  ylab("steps") +
-  ggtitle("Total number of steps") 
+ggplot(totalSteps, aes(x = steps)) + 
+  geom_histogram(colour = "black", fill = "white", binwidth = 1000) +
+  geom_vline(aes(xintercept = mean(totalSteps$steps)), color="red", linetype="dashed", size=1) +
+  ggtitle("Total number of steps per day") 
 
 ```
 
@@ -57,10 +62,10 @@ mean(totalStepsComplete$steps)
 median(totalStepsComplete$steps)
 
 library(ggplot2)
-ggplot(totalStepsComplete, aes(x = date, weight = steps)) + 
-  geom_bar(colour = "black", fill = "magenta", binwidth = 1) +
-  ylab("steps") +
-  ggtitle("Total number of steps")
+ggplot(totalStepsComplete, aes(x = steps)) + 
+  geom_histogram(colour = "black", fill = "white", binwidth = 1000) +
+  geom_vline(aes(xintercept = mean(totalSteps$steps)), color="red", linetype="dashed", size=1) +
+  ggtitle("Total number of steps per day") 
 
 ```
 

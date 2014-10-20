@@ -6,20 +6,25 @@
 ## Loading and preprocessing the data
 
 ```r
-unzip("activity.zip")
+if (!file.exists("./activity.zip")) {
+  fileURL = "https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Factivity.zip"
+  download.file(fileURL, "./activity_data.zip")
+  unzip("activity.zip")
+}
+
 activity = read.csv("activity.csv")
 activity$date = as.Date(activity$date)
 summary(activity)
 ```
 
 ```
-##      steps            date               interval   
-##  Min.   :  0.0   Min.   :2012-10-01   Min.   :   0  
-##  1st Qu.:  0.0   1st Qu.:2012-10-16   1st Qu.: 589  
-##  Median :  0.0   Median :2012-10-31   Median :1178  
-##  Mean   : 37.4   Mean   :2012-10-31   Mean   :1178  
-##  3rd Qu.: 12.0   3rd Qu.:2012-11-15   3rd Qu.:1766  
-##  Max.   :806.0   Max.   :2012-11-30   Max.   :2355  
+##      steps             date               interval     
+##  Min.   :  0.00   Min.   :2012-10-01   Min.   :   0.0  
+##  1st Qu.:  0.00   1st Qu.:2012-10-16   1st Qu.: 588.8  
+##  Median :  0.00   Median :2012-10-31   Median :1177.5  
+##  Mean   : 37.38   Mean   :2012-10-31   Mean   :1177.5  
+##  3rd Qu.: 12.00   3rd Qu.:2012-11-15   3rd Qu.:1766.2  
+##  Max.   :806.00   Max.   :2012-11-30   Max.   :2355.0  
 ##  NA's   :2304
 ```
 
@@ -31,7 +36,7 @@ mean(totalSteps$steps)
 ```
 
 ```
-## [1] 10766
+## [1] 10766.19
 ```
 
 ```r
@@ -44,13 +49,13 @@ median(totalSteps$steps)
 
 ```r
 library(ggplot2)
-ggplot(totalSteps, aes(x = date, weight = steps)) + 
-  geom_bar(colour = "black", fill = "magenta", binwidth = 1) +
-  ylab("steps") +
-  ggtitle("Total number of steps") 
+ggplot(totalSteps, aes(x = steps)) + 
+  geom_histogram(colour = "black", fill = "white", binwidth = 1000) +
+  geom_vline(aes(xintercept = mean(totalSteps$steps)), color="red", linetype="dashed", size=1) +
+  ggtitle("Total number of steps per day") 
 ```
 
-![plot of chunk meanTotalSteps](./PA1_template_files/figure-html/meanTotalSteps.png) 
+![](./PA1_template_files/figure-html/meanTotalSteps-1.png) 
 
 ## What is the average daily activity pattern?
 
@@ -61,7 +66,7 @@ meanStepsByInterval = activity %>% tbl_df() %>% group_by(interval) %>% summarise
 ggplot(meanStepsByInterval, aes(x = interval, y = mean_steps)) + geom_line() + ggtitle("Average number of steps by interval")
 ```
 
-![plot of chunk averageDaily](./PA1_template_files/figure-html/averageDaily.png) 
+![](./PA1_template_files/figure-html/averageDaily-1.png) 
 
 ```r
 meanStepsByInterval$interval[which.max(meanStepsByInterval$mean_steps)]
@@ -93,7 +98,7 @@ mean(totalStepsComplete$steps)
 ```
 
 ```
-## [1] 10766
+## [1] 10766.19
 ```
 
 ```r
@@ -101,18 +106,18 @@ median(totalStepsComplete$steps)
 ```
 
 ```
-## [1] 10766
+## [1] 10766.19
 ```
 
 ```r
 library(ggplot2)
-ggplot(totalStepsComplete, aes(x = date, weight = steps)) + 
-  geom_bar(colour = "black", fill = "magenta", binwidth = 1) +
-  ylab("steps") +
-  ggtitle("Total number of steps")
+ggplot(totalStepsComplete, aes(x = steps)) + 
+  geom_histogram(colour = "black", fill = "white", binwidth = 1000) +
+  geom_vline(aes(xintercept = mean(totalSteps$steps)), color="red", linetype="dashed", size=1) +
+  ggtitle("Total number of steps per day") 
 ```
 
-![plot of chunk missing](./PA1_template_files/figure-html/missing.png) 
+![](./PA1_template_files/figure-html/missing-1.png) 
 
 We can see that there is no effect of imputing on mean and median because we were imputing using the mean values for each of the intervals.
 
@@ -133,7 +138,7 @@ ggplot(meanStepsByInterval, aes(x = interval, y = mean_steps)) +
   ggtitle("Average number of steps by interval")
 ```
 
-![plot of chunk weekdays](./PA1_template_files/figure-html/weekdays1.png) 
+![](./PA1_template_files/figure-html/weekdays-1.png) 
 
 ```r
 ggplot(meanStepsByInterval, aes(x = interval, y = mean_steps, color = typeOfDay)) + 
@@ -141,4 +146,4 @@ ggplot(meanStepsByInterval, aes(x = interval, y = mean_steps, color = typeOfDay)
   ggtitle("Average number of steps by interval")
 ```
 
-![plot of chunk weekdays](./PA1_template_files/figure-html/weekdays2.png) 
+![](./PA1_template_files/figure-html/weekdays-2.png) 
